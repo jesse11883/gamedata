@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys, os
 import codecs 
 import re
@@ -68,3 +69,7 @@ with open(stable_by, mode='r', encoding="gb18030", errors="ignore") as in_file, 
             #out_file.write(f'{ref}\t{name}\n')
         line = line.strip("\n\r ")
         out_file.write(f"{line}\n")
+=======
+import sys
+import os
+>>>>>>> fac45cae9613187bbb251d291052ee04e1f264fe
