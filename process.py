@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 import sys, os
 import codecs 
 import re
-
-
 
 '''
 解决方法：处理的字符的确是gb2312，但是其中夹杂的部分特殊字符，是gb2312编码中所没有的。
@@ -15,9 +12,9 @@ GB2312，GBK，GB18030，是兼容的，包含的字符个数：GB2312 < GBK < G
 https://stackoverflow.com/questions/24616678/unicodedecodeerror-in-python-when-reading-a-file-how-to-ignore-the-error-and-ju
 '''
 
-homepath = "/home/myao/dev/data/gamedata"
-stable_by = os.path.join(homepath, "stable_sell.txt")
-stable_by_uft8 = os.path.join(homepath, "stable_sell_utf-8.txt")
+homepath = "/Users/michaelyao/dev/data/gamedata/data"
+stable_by = os.path.join(homepath, "dn_deposit_3m.txt")
+stable_by_uft8 = os.path.join(homepath, "dn_deposit_3m_utf-8.txt")
 
 # _surrogates = re.compile(r"[\uDC80-\uDCFF]")
 
@@ -69,7 +66,4 @@ with open(stable_by, mode='r', encoding="gb18030", errors="ignore") as in_file, 
             #out_file.write(f'{ref}\t{name}\n')
         line = line.strip("\n\r ")
         out_file.write(f"{line}\n")
-=======
-import sys
-import os
->>>>>>> fac45cae9613187bbb251d291052ee04e1f264fe
+
