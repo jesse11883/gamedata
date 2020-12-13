@@ -13,8 +13,8 @@ https://stackoverflow.com/questions/24616678/unicodedecodeerror-in-python-when-r
 '''
 
 homepath = "/Users/michaelyao/dev/data/gamedata/data"
-stable_by = os.path.join(homepath, "dn_deposit_3m.txt")
-stable_by_uft8 = os.path.join(homepath, "dn_deposit_3m_utf-8.txt")
+stable_by = os.path.join(homepath, "dn_item_trade-processed.txt")
+stable_by_uft8 = os.path.join(homepath, "dn_item_trade-processed_utf-8.txt")
 
 # _surrogates = re.compile(r"[\uDC80-\uDCFF]")
 
