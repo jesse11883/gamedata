@@ -53,7 +53,7 @@ for trade in dn_item_trade_processed.find():
             item_serials.append(item_serial)
     total+= 1
     if( total %100000 == 0):
-        print(f"processing {total}, no char {no_char}, processed: {processed}, not found: {not_found_list}")
+        print(f"processing {total}, no char {no_char}, processed: {processed}, not found: {not_found}")
         print(f"no char: {nochar_serials}")
         print(f"char list: {item_serials}")
         print(f"not_found_list: {not_found_list}")
