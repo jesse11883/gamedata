@@ -26,7 +26,7 @@ async def process():
     item_serials = []
     nochar_serials = []
     not_found_list = []
-    cursor = dn_item_trade_processed.find().sort("_id"):
+    cursor = dn_item_trade_processed.find({"$or":[{"characterid_buyer": {"$exists": True}}, {"processed": True}]}).sort("_id"):
     for trade in await cursor.to_list(length=100):
     #for trade in dn_item_trade_processed.find():
         item_serial = trade["ITEMSERIAL"]
@@ -35,6 +35,7 @@ async def process():
         trade_3m = await dn_itemtrade_3m_union.find_one({"ITEMSERIAL": item_serial})
         if(trade_3m is None):
             not_found += 1
+            await dn_item_trade_processed.update_one({"_id": trade["_id"]}, {"$set":{"processed": True, 'processed_time': datetime.now()}})
             if len(not_found_list) < 20:
                 not_found_list.append(item_serial)
             continue
@@ -44,14 +45,15 @@ async def process():
         seller_char = name_map.get(seller, None)
         if buyer_char is None or seller_char is None:
             no_char+= 1
+            await dn_item_trade_processed.update_one({"_id": trade["_id"]}, {"$set":{"processed": True, 'processed_time': datetime.now()}})
             if len(nochar_serials) < 20:
                 nochar_serials.append(item_serial)
             continue
         else:
-            trade["characterid_buyer"] = buyer_char
-            trade['characterid_seller'] = seller_char
+            #trade["characterid_buyer"] = buyer_char
+            #trade['characterid_seller'] = seller_char
 
-            res = await dn_item_trade_processed.update_one({"_id": trade["_id"]}, {"$set":{"characterid_buyer": buyer_char, 'characterid_seller': seller_char}})
+            res = await dn_item_trade_processed.update_one({"_id": trade["_id"]}, {"$set":{"characterid_buyer": buyer_char, 'characterid_seller': seller_char,"processed": True, 'processed_time': datetime.now()}})
             processed+= 1
             if len(item_serials) < 20:
                 item_serials.append(item_serial)
