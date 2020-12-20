@@ -4,7 +4,9 @@ import csv
 import re
 import copy
 from datetime import datetime
+import asyncio
 import motor.motor_asyncio
+from bson.objectid import ObjectId
 
 csv.register_dialect('piper', delimiter='|', quoting=csv.QUOTE_NONE)
 
@@ -22,16 +24,38 @@ async def process():
     total = 0
     no_char = 0
     processed = 0
-    not_found = 1
+    already_processed = 0
+    not_found = 0
     item_serials = []
     nochar_serials = []
     not_found_list = []
-    cursor = dn_item_trade_processed.find({"$or":[{"characterid_buyer": {"$exists": True}}, {"processed": True}]}).sort("_id"):
-    for trade in await cursor.to_list(length=100):
-    #for trade in dn_item_trade_processed.find():
+    start = datetime.now()
+    last_id = ""
+    cursor = dn_item_trade_processed.find({"_id":{"$gte":ObjectId('5fcc8677648d0b1e652d072d')}},{"_id":1, "ITEMSERIAL":1, 'BUYER':1, 'SELLER':1,'characterid_buyer':1, "characterid_seller":1, "processed": 1  }).sort("_id")
+    for trade in await cursor.to_list(length=12000000):
+    #for trade in dn_item_trade_processed.find({"$or":[{"characterid_buyer": {"$exists": True}}, {"processed": True}]}).sort("_id"):
+        total+= 1
+
+        if( total %100000 == 0):
+            print(trade["_id"])
+            print(f"{last_id} processing {total}, no char {no_char},already_processed: {already_processed},  processed: {processed}, not found: {not_found}")
+            print(f"time spend so far {datetime.now()-start}")
+            #print(f"no char: {nochar_serials}")
+            #print(f"char list: {item_serials}")
+            #print(f"not_found_list: {not_found_list}")
+
+            nochar_serials = []
+            item_serials = []
+            not_found_list = []
+
+
         item_serial = trade["ITEMSERIAL"]
+        last_id = trade["_id"]
         buyer = trade['BUYER']
         seller = trade['SELLER']
+        if (("processed" in trade and trade["processed"] ) or ("characterid_buyer" in trade) or "characterid_seller" in trade):
+            already_processed +=1
+            continue
         trade_3m = await dn_itemtrade_3m_union.find_one({"ITEMSERIAL": item_serial})
         if(trade_3m is None):
             not_found += 1
@@ -57,22 +81,13 @@ async def process():
             processed+= 1
             if len(item_serials) < 20:
                 item_serials.append(item_serial)
-        total+= 1
-        if( total %100000 == 0):
-            print(trade["_id"])
-            print(f"processing {total}, no char {no_char}, processed: {processed}, not found: {not_found}")
-            print(f"no char: {nochar_serials}")
-            print(f"char list: {item_serials}")
-            print(f"not_found_list: {not_found_list}")
 
-            nochar_serials = []
-            item_serials = []
-            not_found_list = []
 
-    print(f"processing {total}, no char {no_char}, processed: {processed}, not found: {not_found_list}")
-    print(f"no char: {nochar_serials}")
-    print(f"char list: {item_serials}")
-    print(f"not_found_list: {not_found_list}")
+
+    print(f"{last_id} processing {total}, no char {no_char}, ,already_processed: {already_processed}, processed: {processed}, not found: {not_found}")
+    #print(f"no char: {nochar_serials}")
+    #print(f"char list: {item_serials}")
+    #print(f"not_found_list: {not_found_list}")
     nochar_serials = []
     item_serials = []
     not_found_list = []
