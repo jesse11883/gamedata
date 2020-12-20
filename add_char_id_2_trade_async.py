@@ -31,8 +31,9 @@ async def process():
     not_found_list = []
     start = datetime.now()
     last_id = ""
-    cursor = dn_item_trade_processed.find({"_id":{"$gte":ObjectId('5fcc8677648d0b1e652d072d')}},{"_id":1, "ITEMSERIAL":1, 'BUYER':1, 'SELLER':1,'characterid_buyer':1, "characterid_seller":1, "processed": 1  }).sort("_id")
-    for trade in await cursor.to_list(length=12000000):
+    # last processed : 5fccd8c5648d0b1e65b1c78b
+    cursor = dn_item_trade_processed.find({"_id":{"$gte":ObjectId('5fccd8c5648d0b1e65b1c78b')}},{"_id":1, "ITEMSERIAL":1, 'BUYER':1, 'SELLER':1,'characterid_buyer':1, "characterid_seller":1, "processed": 1  }).sort("_id")
+    for trade in await cursor.to_list(length=10000000):
     #for trade in dn_item_trade_processed.find({"$or":[{"characterid_buyer": {"$exists": True}}, {"processed": True}]}).sort("_id"):
         total+= 1
 
